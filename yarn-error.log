@@ -1,0 +1,41 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js add express,
+
+PATH: 
+  /home/jefferson/.zinit/polaris/sbin:/home/jefferson/.zinit/polaris/bin:/home/jefferson/.zinit/polaris/usr/sbin:/home/jefferson/.zinit/polaris/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/jefferson/Android/Sdk/emulator:/home/jefferson/Android/Sdk/tools:/home/jefferson/Android/Sdk/tools/bin:/home/jefferson/Android/Sdk/platform-tools:/home/jefferson/android-studio/bin:/home/jefferson/Android/Sdk/emulator:/home/jefferson/Android/Sdk/tools:/home/jefferson/Android/Sdk/tools/bin:/home/jefferson/Android/Sdk/platform-tools:/home/jefferson/android-studio/bin:/home/jefferson/Android/Sdk/emulator:/home/jefferson/Android/Sdk/tools:/home/jefferson/Android/Sdk/tools/bin:/home/jefferson/Android/Sdk/platform-tools:/home/jefferson/android-studio/bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.18.1
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/express,: Not found
+      at Request.params.callback [as _callback] (/usr/share/yarn/lib/cli.js:66987:18)
+      at Request.self.callback (/usr/share/yarn/lib/cli.js:140748:22)
+      at Request.emit (events.js:315:20)
+      at Request.<anonymous> (/usr/share/yarn/lib/cli.js:141720:10)
+      at Request.emit (events.js:315:20)
+      at IncomingMessage.<anonymous> (/usr/share/yarn/lib/cli.js:141642:12)
+      at Object.onceWrapper (events.js:421:28)
+      at IncomingMessage.emit (events.js:327:22)
+      at endReadableNT (_stream_readable.js:1221:12)
+      at processTicksAndRejections (internal/process/task_queues.js:84:21)
+
+npm manifest: 
+  {
+    "name": "node-project",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
