@@ -54,6 +54,10 @@ $ yarn typeorm migration:run
 $ yarn dev:server
 ```
 
+#### :zap: Como fazer deploy deste projeto
+
+Separei um guia rápido de como fazer deploy de aplicações nodeJS em servidores ou vps linux, utilizando o ubuntu, o ponto principal é configurar seu projeto e deixar no ponto para fazer o deploy, e para isso segue o [guia rápido]('./DEPLOY.md').
+
 #### 🎨 Imagens
 
 <p align="center">
