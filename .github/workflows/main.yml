@@ -36,6 +36,8 @@ jobs:
           target: "~/app/gobarber-nodejs"
       
       # Executar 'yarn' no servidor/vps
+      # Executar as migrations do typeORM
+      # Reiniciar servidor node.js
       - name: Install dependencies on server/vps
         uses: appleboy/scp-action@master
         with:
@@ -46,25 +48,7 @@ jobs:
           script: | 
             cd ~/app/gobarber-nodejs
             yarn
-            
-      # Executar as migrations do typeORM
-      - name: Run typeORM migrations on server/vps
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          script: | 
-            cd ~/app/gobarber-nodejs
             ./node_modules/.bin/typeorm migration:run
+            pm2 restart gobarber-api
             
-      # Reiniciar servidor node.js
-      - name: Restart aplication
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          script: pm2 restart gobarber-api
+            
