@@ -1,34 +1,34 @@
-### DEPLOY DE UM BACKEND(API) NODEJS COM TYPESCRIPT
+## DEPLOY INTERMEDIÁRIO DE UMA API (BACKEND) NODEJS COM TYPESCRIPT
 
-Neste tutorial vou ensinar como fazer o deploy de uma aplicação backend (api) feita em nodejs, este projeto foi construido com typescript não deixe de prestar atenção nas observações.
+Neste guia completo vou ensinar como fazer um deploy intermediário de uma aplicação feita com nodejs e typescript, trata-se de um deploy do backend (API) de um projeto, neste guia vamos utilizar um projeto como exemplo, antes de iniciar é importante você fazer uma cópia deste projeto e subir ele no seu gihub, então crie um repositório e faça um push com a aplicação que você deseja fazer deploy ou utilize a nossa aplicação.
 
-**O que utilizamos nesse tutorial**
-S.O do servidor/vps: **ubuntu server 20.04 LTS**
-S.O do computador pessoal: **Ubuntu desktop 20.04 LTS**
-Backend App: [API GOBARBER](https://github.com/jefferson1104/gobarber-nodejs)
-Se voce utilizar este mesmo projeto do tutorial para executar o deploy, é necessário que voce faça uma cópia desse projeto no seu github, crie um repositório e faça um push desse projeto.
+### UTILIZAMOS AQUI
 
-> **OBSERVAÇÃO 1**: Caso sua aplicação seja construida com typescript, ES6 ou alguma versão mais moderna do javascript, vamos precisar da ferramenta **[babel](https://babeljs.io/)**, é uma ferramenta que faz a transpilação de código javascript para uma versão mais entendivel do ambiente de execução seja ele o próprio **browser** (navegador) ou **Node**.
+**Máquina pessoal**: Ubuntu desktop 20.04 LTS, Docker, Yarn, Node 14.x
+**Servidor/VPS**: ubuntu server 20.04 LTS, Docker, Yarn, Node 14.x
+**API NodeJS TypeScript**: [GOBARBER](https://github.com/jefferson1104/gobarber-nodejs)
 
-> **OBSERVAÇÃO 2**: Outro ponto importante é voce ter um repositório com seu projeto, seja no github, gitlab, gitbucket ou algum outro repositório de código online.
+> **OBSERVAÇÃO**: Caso sua aplicação seja construida com typescript, ES6 ou alguma versão mais moderna do javascript, vamos precisar da ferramenta **[babel](https://babeljs.io/)**, para fazer a transpilação de código javascript moderno para uma versão que os ambientee de execução seja ele o próprio **browser** (navegador) ou **Node**.
 
-#### Gerando build do projeto
+### BUILD DO PROJETO (MÀQUINA PESSOAL)
 
-Vamos utilizar a ferramenta **"babel"** para fazer a conversão do nosso código typescript para javascript, para isso vamos instalar algumas bibliotecas como dependencia de desenvolvimento.
+Vamos utilizar a ferramenta **babel** para fazer a conversão do nosso código typescript para javascript, para isso vamos instalar algumas bibliotecas como dependência de desenvolvimento, execute o código abaixo no terminal do seu projeto.
 
 ```bash
-yarn add @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver -D
+$ yarn add @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver -D
 ```
 
 ![babel-install](./assets/tutorial/01_screenshot_babel_install.png)
 
-Em nosso código utilizamos decorators, devido isso em especifico nesse projeto que estamos fazendo o deploy, iremos instalar os plugins abaixo como dependência de desenvolvimento
+Especificamente nesse projeto do gobarber estamos utilizando **decorators** em nosso código, devido a isso iremos instalar os plugins abaixo como dependência de desenvolvimento.
 
 ```bash
-yarn add babel-plugin-transform-typescript-metadata @babel/plugin-proposal-decorators @babel/plugin-proposal-class-properties -D
+$ yarn add babel-plugin-transform-typescript-metadata @babel/plugin-proposal-decorators @babel/plugin-proposal-class-properties -D
 ```
 
-Agora no diretório raiz do seu projeto crie o arquivo de configuração do babel chamado **babel.config.js**, e em seguida insira as configurações a seguir, lembrando que essas configurações variam de acordo com cada projeto, de acordo com o **tsconfig.json** do nosso projeto feito com typescript, siga o exemplo abaixo:
+No diretório raiz do projeto crie o arquivo de configuração do babel, seu nome será **babel.config.js**, dentro desse arquivo vamos inserir configurações do projeto, como nosso projeto foi construido com typescript, vamos utilizar o arquivo **tsconfig.json** como parâmetro, abaixo veja o resultado do conteudo que deve ter seu arquivo de configuração do babel.
+
+**babel.config.js**
 
 ```bash
 module.exports = {
@@ -51,7 +51,7 @@ module.exports = {
 }
 ```
 
-Dentro do seu **package.json** na sessão de **"scripts"** crie ou ajuste o script de **build** passando o babel como o transpilador de código para javascript:
+Dentro do seu **package.json** na sessão de **"scripts"** crie ou ajuste o script de **build** do projeto, passando o babel como o transpilador de código para javascript.
 
 ```json
  "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files"
@@ -59,50 +59,65 @@ Dentro do seu **package.json** na sessão de **"scripts"** crie ou ajuste o scri
 
 ![build-script](./assets/tutorial/02_screenshot_build_script.png)
 
-Agora executamos o comando `yarn build` ele ja está configurado no **package.json** do projeto, na lista de arquivos do vscode você percebe que foi gerado um diretório chamado **"dist"** dentro dele está todo o código do projeto convertido para javascript.
+Execute o comando de build que acabamos de configurar nos scripts do **package.json**, aṕós sua execução veremos que foi gerado um novo diretório chamado '**dist**', nele está todo o código convertido de typescript para javascript.
+
+```bash
+# Executando build do projeto
+$ yarn build
+```
 
 ![build-project](./assets/tutorial/03_screenshot_build_project.png)
 
-### CONFIGURANDO SERVIDOR LINUX
+## CONFIGURAÇÃO DO SERVIDOR/VPS
 
-> **REQUISITOS**: Você vai precisar de um servidor ou vps, crie ou contrate sua infra-estrutura na empresa que você desejar, eu tenho como preferência utilizar a [digital ocean](https://www.digitalocean.com/) ou té mesmo a [contabo](https://contabo.com/en/), se você tambem utilizar elas, para uma melhor performance recomendo voce utilizar elas com servidores na américa do norte.
-> Tenha seu servidor ou VPS com um sistema operacional **linux** e com o **docker** instalado, a distribuição pode ser a que você tenha mais familiaridade não importa se vai ser ubuntu, debian ou qualquer outra.
+Para fazer o deploy do projeto vamos fazer uma série de configurações no servidor/vps, você pode contratar um servidor/vps nas mais conhecidas empresas do mercado, eu recomendo utilizar os produtos da [digital ocean](https://www.digitalocean.com/) ou [contabo](https://contabo.com/en/) mas você pode criar seu próprio servidor/vps ou contratar em qualquer outra empresa.
 
-SISTEMA OPERACIONAL UTILIZADO NESSE GUIA: **UBUNTU**
+#### REQUISITOS
 
-**Configurações básicas**
-Como boa prática de segurança vamos criar um usuário com nome de "**deploy**" e dar as permissoes de sudo para ele, também vamos atualizar os pacotes do nosso sistema operacional, e na home do usuario que criamos vamos criar uma pasta oculta chamda "**.ssh**"
+- Sistema Operacional Ubuntu desktop 20.04 LTS
+- Docker
+- NodeJS 14.x
+- NPM
+- Yarn
+
+#### CONFIGURAÇÕES INICIAIS (SERVIDOR/VPS)
+
+Por questões de boas práticas sobre segurança, recomendo que não utilize o usuário '**root**', vamos criar um usuário novo com nome '**deploy**' e colocá-lo no grudo dos **sudoers**, fazer uma atualização dos pacotes e dependencias do sistema operacional e criar um diretório '**.ssh**'
 
 ```bash
-# Para atualizar vamos executar os comandos
+# Atualizando sistema operacional
 $ sudo apt update
 $ sudo apt upgrade
 
-# Criando usuario
+# Criando usuário deploy
 $ adduser deploy
 
-# Permissões de sudo
+# Permissões de sudo para o usuário
 $ usermod -aG sudo deploy
 
 # Acessando a home do usuário deploy
 $ cd /home/deploy/
 
-# Criando pasta oculta chamada ssh
+# Criando diretório .ssh
 $ mkdir .ssh
 
-# Convertendo as opções para o grupo deploy
+# Alterar dono do diretório .ssh
 $ chown deploy:deploy .ssh/
-
-# Dentro da pasta ssh voce pode colocar a chave ssh do seu sistema operacional para ter autorizacao e conseguir acessar o servidor/VPS
-
-# Para criar uma chave ssh voce executa os seguintes comandos no seu sistema operacional (se ele for ubuntu tambem)
-$ ssh-keygen
-
-# Apos executar o comando ssh-keygen voce vai gerar dois arquivos, 'id_rsa' e 'id_rsa.pub' suas chaves.
 ```
 
-**Configurando usuario e usuário docker**
-Agora que você criou um usuário com nome "deploy" precisamos fazer login no servidor/vps com este usuário, após fazer o login faça uma configuração de permissão do docker para este usuário.
+Dentro do diretório '**.ssh**' você pode guardar as chaves ssh do seu servidor, para criar uma chave ssh você executa o comando a seguir, mas não dê nenhum nome para essa chave, como default ele mesmo vai nomear como '**id_rsa**' e '**id_rsa.pub**'.
+
+```bash
+# Criar chave ssh
+$ ssh-keygen
+
+```
+
+Após as configurações iniciais, você deve desconectar do sevidor e fazer login novamente via ssh com seu usuário '**deploy**'.
+
+#### CONFIGURANDO DOCKER (SERVIDOR/VPS)
+
+Aapós fazer o login com o usuário deploy faça uma configuração de permissão do docker para este usuário, assim toda vez que voce executar algum comando do docker não será necessário utilizar o sudo antes do comando.
 
 ```bash
 # Criando o grupo docker
@@ -111,18 +126,17 @@ $ sudo groupadd docker
 # Adicionando seu usuário ao grupo docker
 $ sudo usermod -aG docker $USER
 
-# Faça logout e login novamente para validar
-
 # execute o comando abaixo para testar
 $ docker ps -a
-
-# se caso voce ainda estiver sem permissão, reinicie o servidor/vps
 ```
 
-**instalação do nodejs e do gerenciador de pacotes yarn**
-Como boa prática vamos sempre escolher por instalar a versão LTS do nodejs, onde é garantido mais estabilidade e compatibilidade, também vamos instalar o gerenciador de pacotes yarn.
+Caso você após executar o comando para teste e identificar que ainda não tem permissão, tente fazer logout e login novamente com o usuário, e se ainda persistir sem permissão recomendo reiniciar o seu servidor/vps.
 
-https://github.com/nodesource/distributions/blob/master/README.md
+#### INSTALAÇÂO DO NODEJS, NPM E YARN (SERVIDOR/VPS)
+
+Por questões de boas práticas, segurança, estabilidade e compatibilidade vamos instalar sempre a versão **LTS** mais recente do **NodeJS**, também vamos instalar o gerenciador de pacotes **Yarn**.
+
+Se desejar veja a [documentação de instalação do nodeJS](https://github.com/nodesource/distributions/blob/master/README.md).
 
 ```bash
 # Baixando pacotes do node para a instalação
@@ -153,36 +167,29 @@ $ sudo apt install --no-install-recommends yarn
 $ yarn -v
 ```
 
-**Adicionando chaves ssh no github**
-Com a chave ssh do seu servidor, você consegue permitir acessos, um deles vai ser para fazer integração e deploy continuo (CI/CD) com o Github.
+#### GITHUB CHAVES SSH (SERVIDOR/VPS)
 
-Também vamos clonar a nossa aplicação de exemplo que utilizamos nesse tutorial.
+Neste passo vamos fazer a configuração da chave ssh do seu servidor/vps no seu github, vamos acessar o diretório '**.ssh**' e copiar o conteúdo que existe dentro do arquivo '**id_rsa.pub**', o arquivo que criamos quando geramos nossa chave ssh no passo de '**configurações iniciais**'.
 
 ```bash
-# Acessar pasta ssh do servidor
+# Acessar pasta ssh do servidor/vps
 $ cd ~/.ssh/
 
-# Procurar pelos arquivos 'id_rsa' e 'id_rsa.pub'
-$ ls
-
-# caso esses arquivos não existir você pode gerar eles
-$ ssh-keygen
-
-# Copie o conteúdo
+# Copie o conteúdo do arquivo 'id_rsa.pub'
 $ cat id_rsa.pub
 ```
 
 ![ssh-server-key](./assets/tutorial/ssh-key-server.png 'ssh key')
 
-No seu github acesse **settings** > **SSH and GPG keys** e clique no botão **New SSH key**.
+No seu github acesse **settings** > **SSH and GPG keys** e clique no botão **New SSH key**, é aqui que você vai colar a chave ssh que você copiou do arquivo '**id_rsa.pub**' em seguida clique no botão **Add SSH key** para adicionar a chave.
+
+![ssh-server-key](./assets/tutorial/ssh-key-github-02.png 'add ssh key on github')
 
 ![ssh-server-key](./assets/tutorial/ssh-key-github-01.png 'add ssh key on github')
 
-A chave que você copiou voce vai colar e dar um nome para essa chave, siga o exemplo da imagem abaixo, depois clique no botão **Add SSH key**.
-![ssh-server-key](./assets/tutorial/ssh-key-github-02.png 'add ssh key on github')
+#### CLONANDO O PROJETO (SERVIDOR/VPS)
 
-**Clonando projeto, baixando dependencias e executando build**
-Agora faça um clone da aplicação no seu servidor, utilize o conteúdo abaixo como exemplo, lembrando que o projeto que utilizamos nesse tutorial ou qualquer outro tem que estar em um repositório no seu github.
+Nesse passo vamos baixar nosso projeto para o servidor/vps, lembrando que tanto o projeto que estamos utilizando como exemplo neste guia ou o seu projeto pessoal, ambos devem estar em um reposistório no seu Github.
 
 ```bash
 # Navegando para o diretório raiz do servidor/vps
@@ -201,7 +208,9 @@ $ git clone git@github.com:jefferson1104/gobarber-nodejs.git
 
 ![clone app](./assets/tutorial/clone-app.png 'clone app')
 
-Agora acesse o diretório do projeto e faça download de todos os pacotes e dependencias do projeto, após baixar todas as dependencias vamos fazer build da aplicação.
+#### BAIXANDO AS DEPENDÊNCIAS E EXECUTANDO BUILD (SERVIDOR/VPS)
+
+Agora acesse o diretório do projeto e faça download de todos os pacotes e dependências do projeto, após baixar todas as dependências vamos fazer build da aplicação.
 
 ```bash
 # Acessando diretório do projeto
@@ -212,15 +221,21 @@ $ yarn
 
 # Build do projeto
 $ yarn build
-
 ```
 
 ![build app](./assets/tutorial/build-project.png 'build app')
 
-**Criando imagem docker do PostgreSQL**
-Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco de dados SQL do nosso projeto, segue o link com mais detalhes de como funciona criar uma imagem do PostgreSQL utilizando o bitnami:
+#### CRIANDO OS CONTAINERS DE BANCO DE DADOS (SERVIDOR/VPS)
+
+Vamos utilizar imagens de containers de uma biblioteca chamada '**bitnami**' vamos utilizar as imagens do **postgresql**, **mongodb** e **redis**, para mais detalhes de cada uma dessas imagens de containers do bitnami abaixo fica alguns links.
 
 - [bitnami-docker-postgresql](https://github.com/bitnami/bitnami-docker-postgresql)
+
+- [bitnami-docker-mongodb](https://github.com/bitnami/bitnami-docker-mongodb)
+
+- [bitnami-docker-redis](https://github.com/bitnami/bitnami-docker-redis)
+
+##### POSTGRESQL
 
 ```bash
   # Comando para criar o container do banco de dados postgres
@@ -230,7 +245,7 @@ Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco d
   $ docker ps -a
 ```
 
-_EXPLICANDO O COMANDO_
+_Explicando o comando_:
 
 - **docker run** : já cria e executa o container
 - **-d** : executa o container em backgorund
@@ -287,10 +302,7 @@ $ ./node_modules/.bin/typeorm migration:run
 
 ![migration run](./assets/tutorial/migration-run-command.png 'migration run')
 
-**Criando imagem docker do MongoDB**
-Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco de dados NOSQL do nosso projeto, segue o link com mais detalhes de como funciona criar uma imagem do **_MongoDB_** utilizando o bitnami:
-
-- [bitnami-docker-mongodb](https://github.com/bitnami/bitnami-docker-mongodb)
+##### MONGODB
 
 ```bash
  # Comando para criar o container do banco de dados MongoDB
@@ -300,7 +312,7 @@ Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco d
  $ docker ps -a
 ```
 
-_EXPLICANDO O COMANDO_
+_Explicando o comando:_
 
 - **docker run** : já cria e executa o container
 - **-d** : executa o container em backgorund
@@ -347,10 +359,7 @@ Da mesma maneira que fizemos na etapa anterior, quando configuramos o nosso **or
 ]
 ```
 
-**Criando imagem docker do Redis**
-Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco de dados de cache em nosso projeto, segue o link com mais detalhes de como funciona criar uma imagem do **REDIS** utilizando o bitnami:
-
-- [bitnami-docker-redis](https://github.com/bitnami/bitnami-docker-redis)
+##### REDIS
 
 ```bash
  # Comando para criar o container do banco de dados MongoDB
@@ -360,7 +369,7 @@ Vamos utilizar uma biblioteca chamada "bitnami" para criar as imagens de banco d
  $ docker ps -a
 ```
 
-_EXPLICANDO O COMANDO_
+_Explicando o comando:_
 
 - **docker run** : já cria e executa o container
 - **-d** : executa o container em backgorund
@@ -395,19 +404,19 @@ REDIS_PORT=56379
 REDIS_PASS=gobarber110494
 ```
 
-**TESTANDO APLICAÇÃO !!**
+##### TESTANDO APLICAÇÃO
+
+Vamos de forme simples validar que todas as configurações estão corretas, e também todas as conexões com os containers de banco de dados.
 
 ```bash
-# Para validar que todas as configurações estão corretas.
-# Para validar todas as conexões com os bancos de dados.
-
-# Execute
+# Iniciando api (backend)
 $ node dist/shared/infra/http/server.js
 ```
 
 ![Teste app](./assets/tutorial/test-api.png 'Teste app')
 
-**NGINX E PROXY REVERSO**
+### NGINX E PROXY REVERSO
+
 NGINX é um servidor web que também funciona como proxy de email, proxy reverso, e balanceador de carga. A estrutura do software é assíncrona e orientada a eventos, vamos agora instalar e configurar o **niginx** para que nosso projeto funcione como queremos com acessso externo na porta 80 e com proxy reverso.
 
 ```bash
@@ -421,8 +430,9 @@ $ sudo ufw allow 80
 Para testar acesse seu servidor pelo browser
 ![nginx](./assets/tutorial/nginx.png 'nginx')
 
-**configurando**
-Vamos acessar o diretório **sites-available** e vamos começar a editar o arquivo **default** encontrado dentro deste diretório, claro vamos criar um arquivo para nosso projeto **gobarber**.
+#### CONFIGURANDO NGINX (SERVIDOR/VPS)
+
+Vamos acessar o diretório **sites-available** e vamos começar a editar o arquivo **default** encontrado dentro deste diretório, claro vamos criar um arquivo para nosso projeto com o nome de **gobarber**.
 
 ```bash
 # Acessando diretorio sites-available
@@ -431,13 +441,13 @@ $ cd /etc/nginx/sites-available
 # Transformando-se em super usuario
 $ sudo su
 
-# Criando um arquivo utilizando o default como modelo
+# Criando um arquivo utilizando o 'default' como modelo
 $ cp default gobarber
 
-# editando arquivo gobarber com o nano
+# editando arquivo 'gobarber' com o nano
 $ nano gobarber
 
-# Deixe o conteudo do arquivo gobarber igual ao conteudo abaixo e salve o arquivo
+# Conteúdo do arquivo 'gobarber'
 server {
   listen 80 default_server;
   listen [::]:80 default_server;
@@ -466,8 +476,6 @@ $ rm default
 
 ![nginx](./assets/tutorial/nginx-02.png 'nginx')
 
-Testando se a configuração esta correta, execute o comando
-
 ```bash
 # Testando configuração
 $ nginx -t
@@ -482,21 +490,21 @@ $ exit
 ![nginx](./assets/tutorial/nginx-03.png 'nginx')
 
 ```bash
-# Votamos para o diretório raiz do projeto
+# Voltando para o diretório raiz do projeto
 $ cd ~/app/gobarber-nodejs/
 
-# Iniciamos a aplicação
+# Iniciando API (Backend)
 $ node dist/shared/infra/http/server.js
 ```
 
-Acessamos o servido via browser para testar, o esperado que é que seja igual a imagem abaixo:
+Acessamos o servidor via browser para testar, o esperado que é que seja igual a imagem abaixo:
 ![nginx](./assets/tutorial/nginx-04.png 'nginx')
 
-## AUTOMATIZANDO E AJUSTANDO SERVIDOR
+### AJUSTANDO NGINX E AUTOMATIZANDO (SERVIDOR/VPS)
 
-Agora vamos manter todos os seviços no ar, manter nossos containers docker em execução mesmo que nosso servidor seja reiniciado, e também utilizando o gerenciador de processos **PM2** para manter a aplicação sempre em execução.
+Agora vamos manter todos os seviços online, manter nossos containers docker em execução mesmo que nosso servidor seja reiniciado, e também utilizar o gerenciador de processos **PM2** para manter a aplicação sempre em execução.
 
-**Docker containers**
+#### CONTAINERS DOCKER
 
 ```bash
 # Pegar a informação CONTAINER ID
@@ -509,7 +517,7 @@ $ docker update --restart=unless-stopped <CONTAINER ID>
 
 ![docker-containers](./assets/tutorial/docker-containers.png 'docker-containers')
 
-**PM2**
+#### GERENCIADOR DE PROCESSOS PM2
 
 ```bash
 # Instalando PM2
@@ -530,24 +538,24 @@ $ pm2 monit
 
 ![pm2-gobarber-api](./assets/tutorial/pm2-gobarber-api.png 'pm2-gobarber-api')
 
-Para finalizar, vamos configurar o pm2 para inicializar toda vez que o servidor for iniciado ou reiniciado, para isso vamos executar primeiro o comando:
+Para finalizar, vamos configurar o pm2 para inicializar toda vez que o servidor for iniciado ou reiniciado, para isso vamos executar um comando que gera um script, vamos copiar esse script e em seguida executar esse script.
 
 ```bash
-pm2 startup systemd
+# Comando para gerar o script
+$ pm2 startup systemd
 ```
 
 ![pm2-startup-config-01](./assets/tutorial/pm2-startup-config-01.png 'pm2-startup-config-01')
 
-Vamos copiar o comando que foi gerado como mostra na imagem acima, e executar em nosso terminal também
 ![pm2-startup-config-02](./assets/tutorial/pm2-startup-config-02.png 'pm2-startup-config-02')
 
 > **IMPORTANTE**: caso voce for executar mais de um projeto node no mesmo servidor, é importante toda vez que adicionar uma nova aplicação na lista do pm2 executar tambem o comando `pm2 save`
 
-## CONFIGURANDO SSL E DOMINIO
+### CONFIGURANDO SSL E DOMINIO (SERVIDOR/VPS)
 
 Antes de iniciar essa etapa, é necessário você ter um **dominío** e também já ter feito o seu **apontamento** para o servidor/vps que contém sua aplicação.
 
-**configurando dominio no nginx**
+##### CONFIGURANDO DOMINIO
 
 ```bash
 # Acesse novamente o diretorio sites-available
@@ -568,8 +576,9 @@ $ ngix -t
 $ service nginx restart
 ```
 
-**configurando certificado ssl gratuito**
-Utilizando o lets-encript vamos fazer nosso certificado ssl gratuito, para isso siga as instruções abaixo:
+##### CONFIGURANDO CERTIFICADO SSL
+
+Utilizando o lets-encript vamos fazer nosso certificado ssl gratuito, para isso siga as instruções abaixo, se você quiser saber mais sobre acesse o site do [certbot](https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx).
 
 ```bash
 # Removendo qualquer configuração ou instalação inicial
@@ -588,19 +597,18 @@ $ sudo certbot --nginx
 $ sudo ufw allow 443
 ```
 
-FONTE: https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx
+### CI/CD GITHUB (INTEGRAÇÃO E DEPLOY CONTINUO)
 
-## CI/CD GITHUB (INTEGRAÇÃO E DEPLOY CONTINUO)
+Utilizando o **github actions** podemos fazer a integração e deploy contínuo do projeto, ou seja toda vez que houver um commit na branch master(main) da aplicação, automaticamente essa alteração vai para produção, o servidor é reiniciado, novamente é executado as migrations do typeORM, instalações de dependencias do projeto e etc.
 
-Utilizando o **github actions** podemos ter a integração continua da aplicação, ou seja toda vez que houver um commit na branch master da aplicação, automaticamente essa alteração vai para produção, o servidor é reiniciado, vai ser executada as migrations, instalar as dependencias novamente do projeto e etc.
+##### CRIANDO VARIAVEIS
 
-**Criando as variaveis secretas**
 Acesse o repositório do projeto, vá até a opção '**settings**', clique na opção '**secrets**', e em seguida no botão '**New repository secret**'.
 
 ![github-actions](./assets/tutorial/github-actions-01.png 'github-actions')
 ![github-actions](./assets/tutorial/github-actions-02.png 'github-actions')
 
-Vamos gerar uma chave ssh exclusivamente para o github actions **na sua maquina pessoal**.
+Vamos gerar uma chave ssh exclusivamente para o github actions **na sua máquina pessoal**.
 
 ```bash
 # Criar chave ssh e dar o nome dela de 'github_actions'
@@ -653,7 +661,8 @@ Value: conteudo que voce copiou da chave ssh github_actions da sua maquina pesso
 ![github-actions](./assets/tutorial/github-actions-05.png 'github-actions')
 ![github-actions](./assets/tutorial/github-actions-06.png 'github-actions')
 
-**Criando workflow**
+##### CRIANDO UM WORKFLOW
+
 Acesse o repositório do projeto, vá até a opção '**Actions**', clique no link '**set up a workflow yourself**'
 ![github-actions](./assets/tutorial/github-actions-07.png 'github-actions')
 
@@ -718,3 +727,7 @@ jobs:
 
 ![github-actions](./assets/tutorial/github-actions-08.png 'github-actions')
 ![github-actions](./assets/tutorial/github-actions-09.png 'github-actions')
+
+# FIM
+
+Espero que com este guia eu possa ter ajudado muitas pessoas que tem dificuldades de fazer um deploy intermediário de uma aplicação nodeJS,
