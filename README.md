@@ -1,23 +1,17 @@
-<h1 align="center">BACKEND (API)</h1>
 <div align="center" style="margin-bottom: 20px;">
+  <h1 align="center">BACK-END (API)</h1>
   <img alt="gobarber" src="https://github.com/jefferson1104/goBarber/raw/master/assets/images/goBarber-logo.svg" width="auto" heigth="auto"/>
+  <p align="center" style="margin-top: 20px;">
+    <img alt="technology" src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
+    <img alt="technology" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
+    <img alt="technology" src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white">
+  </p>
 </div>
 
-<p align="center">
+# :barber: About this project
+Back-end of the gobarber project made with nodejs using typescript, applying the set of principles and best practices SOLID, TDD and DDD.
 
-  <img alt="technology" src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
-
-  <img alt="technology" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
-
-  <img alt="technology" src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white">
-</p>
-
-#### :barber: O projeto
-
-Backend do projeto gobarber feito com nodejs utilizando typescript, aplicando o conjunto de principios e boas praticas SOLID, TDD e DDD.
-
-#### :rocket: Principais tecnologias
-
+# :rocket: Main technologies
 - [TypeScript](https://www.typescriptlang.org/docs/)
 - [NodeJS](https://nodejs.org/en/)
 - [ExpressJS](https://expressjs.com/pt-br/)
@@ -27,40 +21,37 @@ Backend do projeto gobarber feito com nodejs utilizando typescript, aplicando o 
 - [Redis](https://redis.io/)
 - [NodeMailer](https://nodemailer.com/about/)
 
-#### :zap: Como executar este projeto
+# :zap: How to run this project
+Inside the project, there is already a _docker-compose.yml_ file that has 3 **Docker** containers, a container with **PostgresSQL** database, a container with **MongoDB** database and another container with **Redis** caching database, you just have the Docker installed on your machine.
 
-Dentro do projeto, já existe um arquivo _docker-compose.yml_ que possui 3 contêiners **Docker**, um contêiner com o banco de dados **PostgresSQL**, um contêiner com banco de dados **MongoDB** e outro contêiner com o banco de dados para cache **Redis**, basta ter o Docker instalado em sua máquina.
-
-Para iniciar o backend do projeto (API):
+To start the project backend (API):
 
 ```Bash
-# Acesse o diretório backend
+# Access the back-end directory
 $ cd gobarber-nodejs
 
-# Instale todas as dependencias do projeto
+# Install all project dependencies
 $ yarn
 
-# Crie os containers com PostgresSQL, MongoDB e Redis (necessário ter o docker instalado na máquina)
-# O comando abaixo iniciará em background e não irá bloquear o shell
+# Create containers with PostgresSQL, MongoDB and Redis (docker must be installed on the machine)
+# The command below will start in the background and will not lock the shell
 $ sudo docker-compose up -d
 
-# Comando para verificar se os containers estão em execução
+# Command to check if containers are running
 $ sudo docker ps -a
 
-# Execute as migrations para o banco de dados
+# Run migrations for the database
 $ yarn typeorm migration:run
 
-# Iniciar backend do goBarber localmente na porta 3333
+# Launch goBarber back-end locally on port 3333
 $ yarn dev:server
 ```
 
-#### :zap: Como fazer deploy deste projeto
+# :zap: How to deploy this project
+I've separated a quick guide on how to deploy nodeJS applications on servers or linux vps, using ubuntu, the main point is to configure your project and leave it ready to deploy, and for that follow the [quick guide](./DEPLOY .md).
 
-Separei um guia rápido de como fazer deploy de aplicações nodeJS em servidores ou vps linux, utilizando o ubuntu, o ponto principal é configurar seu projeto e deixar no ponto para fazer o deploy, e para isso segue o [guia rápido](./DEPLOY.md).
-
-#### 🎨 Imagens
-
-<p align="center">
+# 🎨 Imagens
+<div align="center">
   <a href='./assets/images/screenshots/'>
     <img width=500 src="./assets/images/img-02.png">
   </a>
@@ -72,8 +63,4 @@ Separei um guia rápido de como fazer deploy de aplicações nodeJS em servidore
   <a href='./assets/images/screenshots/'>
     <img width=500 src="./assets/images/img-01.png">
   </a>
-</p>
-
-### :memo: Licença
-
-Este projeto é desenvolvido sob a licença MIT. Veja o arquivo [LICENSE](LICENSE.md) para saber mais detalhes.
+</div>
